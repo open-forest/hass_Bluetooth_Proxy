@@ -2,6 +2,7 @@ from homeassistant.components import bluetooth
 
 import logging
 import base64
+import psutil
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class CompanionBLEScanner(bluetooth.BaseHaRemoteScanner):
             manufacturer_data=m_data,
             tx_power=data.get("tx_power", 0),
             details=dict(),
-            advertisement_monotonic_time=data.get("timestamp", 0) / 1000, # Milliseconds to fractional seconds
+            advertisement_monotonic_time=((data.get("timestamp", 0) / 1000) - psutil.boot_time()), # Milliseconds to fractional seconds; subtract boot time
         )
 
     async def async_update_sensors(self):
